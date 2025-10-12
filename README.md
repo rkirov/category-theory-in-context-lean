@@ -19,15 +19,3 @@ This is very much work in progress and an experiement. I am not an expert in Lea
 - the pedagogical approach from the book can be followed without accidentally picking up too much complexity for some Lean technical reason.
 
 PRs are very welcome.
-
-## GitHub configuration
-
-To set up your new GitHub repository, follow these steps:
-
-* Under your repository name, click **Settings**.
-* In the **Actions** section of the sidebar, click "General".
-* Check the box **Allow GitHub Actions to create and approve pull requests**.
-* Click the **Pages** section of the settings sidebar.
-* In the **Source** dropdown menu, select "GitHub Actions".
-
-After following the steps above, you can remove this section from the README file.
