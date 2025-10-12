@@ -49,9 +49,9 @@ instance Category.Sets (α : Type*) : Category (Set α) where
 
 -- example 1.1.4.i
 def Category.MatR (α : Type*) [Ring α] : Category ℕ where
-  Hom := fun X Y => Matrix (Fin X) (Fin Y) α
+  Hom := fun n m => Matrix (Fin m) (Fin n) α
   id := 1
-  comp := fun f g => f * g
+  comp := fun f g => g * f
   id_comp := by simp
   comp_id := by simp
   assoc := by sorry -- not sure why simp doesn't work here
@@ -66,7 +66,7 @@ def Category.Monoid (α : Type*) [Monoid α] : Category Unit where
   assoc f g h := mul_assoc f g h
 
 -- example 1.1.4.iii
-noncomputable instance Category.Poset (α : Type) [PartialOrder α] : Category α where
+noncomputable instance Category.Poset (α : Type*) [PartialOrder α] : Category α where
   Hom X Y := PLift (X ≤ Y) -- some universe gymnastics to move between Prop and Type
   id X := ⟨le_refl X⟩
   comp f g := ⟨le_trans f.down g.down⟩
