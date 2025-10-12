@@ -4,7 +4,7 @@ This is inspired by Tao's https://github.com/teorth/analysis companion.
 
 The rough plan for writing a Lean companion is:
 
-- each chapter gets it's own .lean file
+- each chapter gets its own .lean file
 - each definition, theorem and example from the text are writen to follow the style of the text as much as possible.
 - each exercise is writen as a theorem statement with a `sorry` for the proof.
 - in the chapters that introduce a new concept it is written in the .lean file and not imported from mathlib (even if it exists there)
