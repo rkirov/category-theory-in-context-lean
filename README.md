@@ -1,5 +1,14 @@
 # Lean Companion to Riehl's Category Theory in Context
 
+This repo is a Lean companion to the Category Theory in Context textbook. The book is
+freely available https://emilyriehl.github.io/files/context.pdf.
+
+## Current progress
+
+- Chapter 1 - Sections 1, 2
+
+## How to write a Lean companion to an existing math textbook
+
 This is inspired by Tao's https://github.com/teorth/analysis companion.
 
 The rough plan for writing a Lean companion is:

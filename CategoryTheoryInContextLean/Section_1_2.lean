@@ -1,5 +1,12 @@
 import CategoryTheoryInContextLean.Section_1_1
-import Mathlib.Tactic.TFAE
+
+/-!
+# Category Theory in Context - Section 1.2
+
+We introduce the opposite category, monomorphisms and epimorphisms.
+Also we define sections, retractions, retracts, split monos and split epis.
+We continue to use the custom definition of a category from Section 1.1.
+-/
 
 namespace CategoryInContext
 

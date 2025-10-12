@@ -1,5 +1,12 @@
 import Mathlib.Data.Matrix.Mul  -- use #min_imports to update
 
+/-!
+# Category Theory in Context - Section 1.1
+
+We introduce the basic definition of a category and examples from different areas of math.
+We also define isomorphisms, groupoids and subcategories.
+-/
+
 -- to avoid name clash with Mathlib.CategoryTheory.Category
 namespace CategoryInContext
 
