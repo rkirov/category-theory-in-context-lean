@@ -193,13 +193,11 @@ def Category.maximal_subgroupoid {α : Type*} [Category α] : Subcategory α whe
 theorem Category.pair_inverse_iso {X Y : α} (f : Hom X Y) (g : Hom Y X) (h : Hom Y X)
   (hg : comp f g = id X) (hf : comp h f = id Y) : g = h ∧ IsIso f := by sorry
 
-
 -- exercise 1.1.iii.i
 def Category.slice_under (c : α) : Category (Σ X : α, Hom c X) where
   Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // comp f h = g}
   id := fun ⟨X, f⟩ => ⟨Category.id X, by rw [Category.comp_id]⟩
   comp := fun ⟨k, hk⟩ ⟨l, hl⟩ => ⟨ comp k l, by
-      expose_names
       rw [← Category.assoc]
       rw [hk, hl]
     ⟩
@@ -211,7 +209,6 @@ def Category.slice_over (c : α) : Category (Σ X : α, Hom X c) where
   Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // comp h g = f}
   id := fun ⟨X, f⟩ => ⟨Category.id X, by rw [Category.id_comp]⟩
   comp := fun ⟨k, hk⟩ ⟨l, hl⟩ => ⟨ comp k l, by
-      expose_names
       rw [Category.assoc]
       rw [hl, hk]
     ⟩
