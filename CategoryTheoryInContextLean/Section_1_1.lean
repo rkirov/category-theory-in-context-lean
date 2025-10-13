@@ -40,18 +40,20 @@ class Category (α : Type*) where
 -- using ≫ instead of ∘ to match mathlib.
 scoped infixr:80 " ≫ " => Category.comp -- type as \gg
 
--- -- not in the book, doesn't work for some universe reason, that I don't understand
--- instance Category.Types : Category (Type u) where
---   Hom := fun X Y => X → Y
---   id := fun X x => x
---   comp := fun f g => g ∘ f
---   id_comp := by intros; rfl
---   comp_id := by intros; rfl
---   assoc := by intros; rfl
+universe u
+-- moral equivalent to Set in the book, but working with types in Lean.
+instance Category.Type : Category (Type u) where
+  Hom := fun X Y => X → Y
+  id := fun X x => x
+  comp := fun f g => g ∘ f
+  id_comp := by intros; rfl
+  comp_id := by intros; rfl
+  assoc := by intros; rfl
 
 -- example 1.1.3.i
 -- difference from the book, we use Sets from a fixed Type X, not all sets
-instance Category.Sets (α : Type*) : Category (Set α) where
+-- the equivalent in set theory would be the category of all subsets of a fixed set X.
+instance Category.Set (α : Type*) : Category (Set α) where
   Hom X Y := X → Y
   id _ x := x
   comp f g := g ∘ f

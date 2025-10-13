@@ -30,11 +30,18 @@ def EndoFunctor (α : Type*) [Category α] := @Functor α α
 variable {α : Type*} [C : Category α]
 
 -- examples 1.3.2.i
-def PowerSetFunctor (α : Type*) : Functor (Set α) (Set (Set α)) where
-  F X := Set.powerset X
-  homF f := sorry -- should be Set.image f but it doesn't work for some reason
-  map_id X := by sorry
-  map_comp f g := by sorry
+def PowerSetFunctor : Functor Type Type where
+  F X := Set X
+  homF f := Set.image f
+  map_id X := by
+    simp [Category.id]
+    funext x
+    simp only [Set.image_id']
+  map_comp f g := by
+    simp [Category.comp]
+    funext x
+    simp only [Function.comp_apply]
+    exact Eq.symm (Set.image_image g f x)
 
 -- todo: add 1.3.2.ii-xi, once we have appropriate categories defined
 -- todo: add theorem 1.3.3
@@ -53,11 +60,18 @@ class ContraFunctor (α β : Type*) [C : Category α] [D : Category β] where
     homF (f ≫ g) = homF g ≫ homF f
 
 -- example 1.3.7.i
-def PowerSetContraFunctor (α : Type*) : ContraFunctor (Set α) (Set (Set α)) where
-  F X := Set.powerset X
-  homF f := sorry -- should be Set.preimage f but it doesn't work for some reason
-  map_id X := by sorry
-  map_comp f g := by sorry
+def PowerSetContraFunctor : ContraFunctor Type Type where
+  F X := Set X
+  homF f := Set.preimage f
+  map_id X := by
+    simp [Category.id]
+    funext x
+    simp only [Set.preimage_id']
+  map_comp f g := by
+    simp [Category.comp]
+    funext x
+    simp only [Function.comp_apply]
+    rfl
 
 -- todo: add 1.3.7.ii-vi, once we have appropriate categories defined
 
@@ -78,6 +92,12 @@ theorem Functor.iso_preserve {α β : Type*} [C : Category α] [D : Category β]
     rw [F.map_id]
 
 -- example 1.3.9
-def Gset (α : Type*) [Group α] (β : Type*) : @Functor Unit (Set β) (Category.Monoid α) _ := by sorry
+def g_set_left_action (α : Type*) [Group α] (β : Type*) :
+  @Functor Unit (Set β) (Category.Monoid α) _ := by sorry
+
+def g_set_right_action (α : Type*) [Group α] (β : Type*) :
+  @ContraFunctor Unit (Set β) (Category.Monoid α) _ := by sorry
+
+-- todo: corollary 1.3.10
 
 end CategoryInContext
