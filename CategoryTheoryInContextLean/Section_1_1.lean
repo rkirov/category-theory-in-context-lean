@@ -23,8 +23,13 @@ we use α instead of Obj following https://leanprover-community.github.io/contri
 -/
 class Category (α : Type*) where
   -- objects
+  -- morphisms
   Hom : α → α → Type*
+  -- identity morphism
   id : (X : α) → Hom X X
+  -- composition of morphisms
+  -- we use left-to-right notation for composition to match mathlib
+  -- while the book uses right-to-left notation to match traditional notation for functions
   comp : {X Y Z : α} → Hom X Y → Hom Y Z → Hom X Z
   -- propositions / laws
   id_comp : ∀ {X Y : α} (f : Hom X Y), comp (id X) f = f
@@ -32,6 +37,8 @@ class Category (α : Type*) where
   assoc : ∀ {W X Y Z : α} (f : Hom W X) (g : Hom X Y) (h : Hom Y Z),
     comp (comp f g) h = comp f (comp g h)
 
+-- using ≫ instead of ∘ to match mathlib.
+scoped infixr:80 " ≫ " => Category.comp -- type as \gg
 
 -- -- not in the book, doesn't work for some universe reason, that I don't understand
 -- instance Category.Types : Category (Type u) where
@@ -45,23 +52,23 @@ class Category (α : Type*) where
 -- example 1.1.3.i
 -- difference from the book, we use Sets from a fixed Type X, not all sets
 instance Category.Sets (α : Type*) : Category (Set α) where
-  Hom := fun X Y => X → Y
-  id := fun X x => x
-  comp := fun f g => g ∘ f
-  id_comp := by intros; rfl
-  comp_id := by intros; rfl
-  assoc := by intros; rfl
+  Hom X Y := X → Y
+  id _ x := x
+  comp f g := g ∘ f
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
 
 -- todo: add more examples from mathlib
 
 -- example 1.1.4.i
 def Category.MatR (α : Type*) [Ring α] : Category ℕ where
-  Hom := fun n m => Matrix (Fin m) (Fin n) α
+  Hom n m := Matrix (Fin m) (Fin n) α
   id := 1
-  comp := fun f g => g * f
-  id_comp := by simp
-  comp_id := by simp
-  assoc := by sorry -- not sure why simp doesn't work here
+  comp f g := g * f
+  id_comp _ := by simp
+  comp_id _ := by simp
+  assoc _ _ _ := by rw [Matrix.mul_assoc]
 
 -- example 1.1.4.ii
 def Category.Monoid (α : Type*) [Monoid α] : Category Unit where
@@ -102,8 +109,8 @@ variable {α : Type*} [Category α]
 structure Category.Isomorphism (X Y : α) where
   f : Hom X Y
   inv : Hom Y X
-  hom_inv_id : comp f inv = id X
-  inv_hom_id : comp inv f = id Y
+  hom_inv_id : f ≫ inv = id X
+  inv_hom_id : inv ≫ f = id Y
 
 def Category.id_iso (X : α) : Category.Isomorphism X X :=
   { f := Category.id X
@@ -112,7 +119,7 @@ def Category.id_iso (X : α) : Category.Isomorphism X X :=
     inv_hom_id := by rw [Category.comp_id] }
 
 def Category.IsIso {X Y : α} (f : Hom X Y) : Prop :=
-  ∃ g : Hom Y X, comp f g = id X ∧ comp g f = id Y
+  ∃ g : Hom Y X, f ≫ g = id X ∧ g ≫ f = id Y
 
 lemma Category.iso_iff_isIso {X Y : α} (f : Hom X Y) :
   Category.IsIso f ↔ ∃ (iso : Category.Isomorphism X Y), iso.f = f := by
@@ -130,15 +137,22 @@ def Category.Automorphism (X : α) := Isomorphism X X
 -- example 1.1.10
 -- todo: add more examples from mathlib
 -- example 1.1.10.v
-lemma Category.poset_trivial (α : Type) [PartialOrder α] [Category α] (X Y : α) (f : Hom X Y) :
+lemma Category.poset_trivial (α : Type) [PartialOrder α] (X Y : α) (f : Hom X Y) :
   Category.IsIso f ↔ X = Y := by
   constructor
-  ·  sorry
+  · intro h
+    rw [Category.iso_iff_isIso] at h
+    rcases h with ⟨⟨f, g, _, _⟩, rfl⟩
+    have hlt : X ≤ Y := f.down
+    have hgt : Y ≤ X := g.down
+    exact antisymm hlt hgt
   · intro h
     subst X
+    have : f = id Y := rfl
+    rw [this]
     rw [iso_iff_isIso]
     use id_iso Y
-    sorry -- use the fact that Hom Y Y is a single element type since it was a lift of a Prop
+    rfl
 
 -- definition 1.1.11
 def Category.Groupoid (α : Type*) [Category α] :=
@@ -159,7 +173,7 @@ structure Category.Subcategory (α : Type*) [Category α] where
   hom : {X Y : α} → Hom X Y → Prop
   id_mem : ∀ {X}, obj X → hom (Category.id X)
   comp_mem : ∀ {X Y Z} {f : Hom X Y} {g : Hom Y Z},
-    obj X → obj Y → obj Z → hom f → hom g → hom (Category.comp f g)
+    obj X → obj Y → obj Z → hom f → hom g → hom (f ≫ g)
 
 -- Define subset relation between subcategories as Prop implication
 def Category.Subcategory.subset {α : Type*} [Category α] (S T : Subcategory α) : Prop :=
@@ -172,14 +186,14 @@ instance {α : Type*} [Category α] : HasSubset (Category.Subcategory α) where
 
 -- not in the book
 def Category.full_subcategory (α : Type*) [Category α] : Subcategory α where
-  obj := fun _ => True
-  hom := fun _ => True
+  obj _ := True
+  hom _ := True
   id_mem _ := trivial
   comp_mem _ _ _ _ _ := trivial
 
 def Category.empty_subcategory (α : Type*) [Category α] : Subcategory α where
-  obj := fun X => False
-  hom := fun f => False
+  obj _ := False
+  hom _ := False
   id_mem := by intros; contradiction
   comp_mem := by intros; contradiction
 
@@ -191,18 +205,18 @@ lemma Category.empty_subcategory_subset {α : Type*} [Category α] :
 
 -- lemma 1.1.13 and exercise 1.1.ii
 def Category.maximal_subgroupoid {α : Type*} [Category α] : Subcategory α where
-  obj := fun X => True
-  hom := fun f => Category.IsIso f
+  obj X := True
+  hom f := Category.IsIso f
   id_mem x := by sorry
   comp_mem _ _ _ hf hg := by sorry
 
 -- exercise 1.1.i
 theorem Category.pair_inverse_iso {X Y : α} (f : Hom X Y) (g : Hom Y X) (h : Hom Y X)
-  (hg : comp f g = id X) (hf : comp h f = id Y) : g = h ∧ IsIso f := by sorry
+  (hg : f ≫ g = id X) (hf : h ≫ f = id Y) : g = h ∧ IsIso f := by sorry
 
 -- exercise 1.1.iii.i
 def Category.slice_under (c : α) : Category (Σ X : α, Hom c X) where
-  Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // comp f h = g}
+  Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // f ≫ h = g}
   id := fun ⟨X, f⟩ => ⟨Category.id X, by rw [Category.comp_id]⟩
   comp := fun ⟨k, hk⟩ ⟨l, hl⟩ => ⟨ comp k l, by
       rw [← Category.assoc]
@@ -213,9 +227,9 @@ def Category.slice_under (c : α) : Category (Σ X : α, Hom c X) where
   assoc := by sorry
 
 def Category.slice_over (c : α) : Category (Σ X : α, Hom X c) where
-  Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // comp h g = f}
+  Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // h ≫ g = f}
   id := fun ⟨X, f⟩ => ⟨Category.id X, by rw [Category.id_comp]⟩
-  comp := fun ⟨k, hk⟩ ⟨l, hl⟩ => ⟨ comp k l, by
+  comp := fun ⟨k, hk⟩ ⟨l, hl⟩ => ⟨ k ≫ l, by
       rw [Category.assoc]
       rw [hl, hk]
     ⟩
