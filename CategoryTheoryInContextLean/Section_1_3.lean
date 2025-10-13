@@ -27,8 +27,6 @@ class Functor (α β : Type*) [C : Category α] [D : Category β] where
 
 def EndoFunctor (α : Type*) [Category α] := @Functor α α
 
-variable {α : Type*} [C : Category α]
-
 -- examples 1.3.2.i
 def PowerSetFunctor : Functor Type Type where
   F X := Set X
@@ -98,6 +96,76 @@ def g_set_left_action (α : Type*) [Group α] (β : Type*) :
 def g_set_right_action (α : Type*) [Group α] (β : Type*) :
   @ContraFunctor Unit (Set β) (Category.Monoid α) _ := by sorry
 
--- todo: corollary 1.3.10
+-- todo: corollary 1.3.10, we haven't defined ⁻¹ on isomorphisms yet
+
+-- definition 1.3.11
+def Hom_c_? (α : Type*) [Category α] (c : α) : Functor α Type where
+  F Y := Hom c Y
+  homF {Y Z : α} (f : Hom Y Z) (g : Hom c Y) := g ≫ f
+  map_id Y := by
+    funext g
+    simp [Category.id]
+    rw [comp_id]
+  map_comp {Y Z W : α} (f : Hom Y Z) (g : Hom Z W) := by
+    funext h
+    simp [comp]
+    rw [assoc]
+
+def Hom_?_c (α : Type*) [Category α] (c : α) : ContraFunctor α Type where
+  F X := Hom X c
+  homF {X Y : α} (f: Hom X Y) (g : Hom Y c) := f ≫ g
+  map_id X := by
+    funext g
+    simp [Category.id]
+    rw [id_comp]
+  map_comp {X Y Z : α} (f : Hom X Y) (g : Hom Y Z) := by
+    funext h
+    simp [comp]
+    rw [assoc]
+
+-- definition 1.3.12
+instance CatProduct {α β : Type*} [C : Category α] [D : Category β] : Category (Prod α β) where
+  Hom X Y := (C.Hom X.1 Y.1) × (D.Hom X.2 Y.2)
+  id X := (id X.1, id X.2)
+  comp f g := (f.1 ≫ g.1, f.2 ≫ g.2)
+  id_comp _ := by repeat rw [id_comp]
+  comp_id _ := by repeat rw [comp_id]
+  assoc _ _ _ := by repeat rw [assoc]
+
+/--
+A functor from the product category (bifunctor) to another category gives
+rise to functors from each factor category to the target category when
+fixing an object in the other factor.
+
+this is not proved in the book, but it is easy to prove and useful
+-/
+def prod_functor_functorial_1 {α β γ : Type*} [C : Category α] [D : Category β]
+    [Inhabited β] [E : Category γ] (F : Functor (Prod α β) γ) : Functor α γ where
+  F := fun X => F.F (X, default)
+  homF := fun {X Y} f => F.homF (f, id default)
+  map_id X := by
+    rw [← F.map_id]
+    congr
+  map_comp f g := by
+    rw [← F.map_comp]
+    congr
+    rw [id_comp]
+
+def prod_functor_functorial_2 {α β γ : Type*} [C : Category α] [D : Category β]
+    [Inhabited α] [E : Category γ] (F : Functor (Prod α β) γ) : Functor β γ where
+  -- todo: find a clever way to prove using prod_functor_functorial_1
+  F := fun Y => F.F (default, Y)
+  homF := fun {Y Z} f => F.homF (id default, f)
+  map_id Y := by
+    rw [← F.map_id]
+    congr
+  map_comp f g := by
+    rw [← F.map_comp]
+    congr
+    rw [comp_id]
+
+-- definition 1.3.13 WIP
+-- def Hom_bifunctor (α : Type*) [C: Category α] :
+--   @Functor (Prod α α) Type (@CatProduct α α C.opp C) _ where sorry
 
 end CategoryInContext

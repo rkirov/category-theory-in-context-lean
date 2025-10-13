@@ -10,16 +10,16 @@ We continue to use the custom definition of a category from Section 1.1.
 
 namespace CategoryInContext
 
-variable {α : Type*} [C : Category α]
+open Category
 
 -- definition 1.2.1
-def Category.opp (C : Category α) : Category α where
+def Category.opp {α : Type*} (C : Category α) : Category α where
   Hom X Y := C.Hom Y X
-  id X := Category.id X
+  id X := id X
   comp f g := C.comp g f
-  id_comp := by simp [Category.comp_id]
-  comp_id := by simp [Category.id_comp]
-  assoc := by simp [← Category.assoc]
+  id_comp := by simp [comp_id]
+  comp_id := by simp [id_comp]
+  assoc := by simp [← assoc]
 
 -- exmaple 1.2.2.i
 def Category.MatR' (α : Type*) [Ring α] : Category ℕ where
@@ -29,6 +29,8 @@ def Category.MatR' (α : Type*) [Ring α] : Category ℕ where
   id_comp := by simp
   comp_id := by simp
   assoc _ _ _ := by rw [Matrix.mul_assoc]
+
+variable {α : Type*} [C : Category α]
 
 theorem Category.MatR_opp_eq_MatR' [Ring α] : (MatR α).opp = MatR' α := by sorry
 

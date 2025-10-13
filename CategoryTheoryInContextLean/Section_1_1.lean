@@ -43,12 +43,12 @@ scoped infixr:80 " ≫ " => Category.comp -- type as \gg
 universe u
 -- moral equivalent to Set in the book, but working with types in Lean.
 instance Category.Type : Category (Type u) where
-  Hom := fun X Y => X → Y
-  id := fun X x => x
-  comp := fun f g => g ∘ f
-  id_comp := by intros; rfl
-  comp_id := by intros; rfl
-  assoc := by intros; rfl
+  Hom X Y := X → Y
+  id _ x := x
+  comp f g := g ∘ f
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
 
 -- example 1.1.3.i
 -- difference from the book, we use Sets from a fixed Type X, not all sets
