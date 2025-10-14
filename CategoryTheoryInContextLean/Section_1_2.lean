@@ -12,10 +12,15 @@ namespace CategoryInContext
 
 open Category
 
+-- need a type synomym the types in the opposite category
+-- so that typeclass resolution doesn't get confused
+-- by having two instances of Category on the same type.
+def Opposite (α : Type*) := α
+
 -- definition 1.2.1
-def Category.opp {α : Type*} (C : Category α) : Category α where
+instance Category.opp {α : Type*} [C : Category α] : Category (Opposite α) where
   Hom X Y := C.Hom Y X
-  id X := id X
+  id X := C.id X
   comp f g := C.comp g f
   id_comp := by simp [comp_id]
   comp_id := by simp [id_comp]
@@ -61,11 +66,11 @@ def Category.Epi {X Y : α} (f : Hom X Y) : Prop :=
   ∀ {Z} (h k : Hom Y Z), f ≫ h = f ≫ k → h = k
 
 lemma Category.mono_op_epi {X Y : α} (f : Hom X Y) :
-    Mono f ↔ @Epi α (opp C) Y X f := by
+    Mono f ↔ @Epi (Opposite α) _ Y X f := by
   sorry
 
 lemma Category.epi_op_mono {X Y : α} (f : Hom X Y) :
-    Epi f ↔ @Mono α (opp C) Y X f := by
+    Epi f ↔ @Mono (Opposite α) _ Y X f := by
   sorry
 
 -- todo: add support for custom notation: X → Y for Hom X Y and X ↣ Y for {f: Hom X Y // Epi f}
@@ -124,11 +129,12 @@ lemma Category.comp_epi_of_epi_epi {X Y Z : α} (f : Hom X Y) (g : Hom Y Z)
 lemma Category.epi_of_comp_epi {X Y Z : α} (f : Hom X Y) (g : Hom Y Z)
     (hfg : Epi (f ≫ g)) : Epi g := by sorry
 
--- exercise 1.2.i
-def Category.slice_over' (c : α) : Category (Σ X : α, Hom X c) :=
-    opp (@slice_under α (opp C) c)
-theorem Category.slice_over_equiv_slice_over' (c : α) :
-  slice_over c = slice_over' c := by sorry
+-- -- exercise 1.2.i
+-- todo: fix with new Opposite definition
+-- def Category.slice_over' (c : α) : Category (Opposite (Σ X : α, Hom X c)) :=
+--     slice_under (c : (Opposite α))
+-- theorem Category.slice_over_equiv_slice_over' (c : α) :
+--   slice_over c = slice_over' c := by sorry
 
 -- exercise 1.2.ii.i
 theorem Category.split_epi_iff {X Y : α} (f : Hom X Y) :

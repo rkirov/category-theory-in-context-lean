@@ -164,8 +164,19 @@ def prod_functor_functorial_2 {α β γ : Type*} [C : Category α] [D : Category
     congr
     rw [comp_id]
 
--- definition 1.3.13 WIP
--- def Hom_bifunctor (α : Type*) [C: Category α] :
---   @Functor (Prod α α) Type (@CatProduct α α C.opp C) _ where sorry
+-- definition 1.3.13
+def Hom_bifunctor (α : Type*) [C : Category α] : Functor (Prod (Opposite α) α) Type where
+  -- without the C. qualification Lean picks up C.opp.Hom and hilarity ensues
+  F X := C.Hom X.1 X.2
+  homF {X Y} f g := f.1 ≫ g ≫ f.2
+  map_id X := by
+    funext g
+    simp [Category.id]
+    rw [id_comp]
+    rw [comp_id]
+  map_comp f g := by
+    funext h
+    simp [comp]
+    repeat rw [assoc]
 
 end CategoryInContext
