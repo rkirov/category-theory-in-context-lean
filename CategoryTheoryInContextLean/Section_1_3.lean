@@ -224,7 +224,7 @@ def Op : Functor Cat Cat where
 -- exercise 1.3.i
 -- the answer to what is a group homomorphism, but you need to
 -- provide the proof.
-theorem group_cat_functor {α β: Type*} [Group α] [Group β]
+theorem group_cat_functor {α β : Type*} [Group α] [Group β]
     (F : @Functor Unit Unit (Category.Monoid α) (Category.Monoid β)) :
     ∃ f: α →* β, ∀ x: α, F.homF (X := ()) (Y := ()) x = f x := by sorry
 
@@ -238,7 +238,7 @@ noncomputable instance Category.Preorder (α : Type*) [Preorder α] : Category �
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-theorem preorder_cat_functor {α β: Type*} [Preorder α] [Preorder β]
+theorem preorder_cat_functor {α β : Type*} [Preorder α] [Preorder β]
     (F : Functor α β) :
     ∃ f: α → β, (Monotone f ∧ ∀ x: α, F.F x = f x) := by sorry
 
