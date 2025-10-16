@@ -131,7 +131,7 @@ lemma Category.iso_iff_isIso {X Y : α} (f : Hom X Y) :
   · rintro ⟨⟨f, g, hg, hf⟩, rfl⟩
     exact ⟨g, hg, hf⟩
 
-def Category.Isomorphic (X Y : α) := Inhabited (Isomorphism X Y)
+def Category.Isomorphic (X Y : α) := Nonempty (Isomorphism X Y)
 
 def Category.Endomorphism (X : α) := Hom X X
 def Category.Automorphism (X : α) := Isomorphism X X

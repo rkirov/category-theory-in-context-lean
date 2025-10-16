@@ -130,11 +130,9 @@ lemma Category.epi_of_comp_epi {X Y Z : α} (f : Hom X Y) (g : Hom Y Z)
     (hfg : Epi (f ≫ g)) : Epi g := by sorry
 
 -- -- exercise 1.2.i
--- todo: fix with new Opposite definition
--- def Category.slice_over' (c : α) : Category (Opposite (Σ X : α, Hom X c)) :=
---     slice_under (c : (Opposite α))
--- theorem Category.slice_over_equiv_slice_over' (c : α) :
---   slice_over c = slice_over' c := by sorry
+def Category.slice_over' (c : α) := @slice_under (Opposite α) (C.opp) c
+theorem Category.slice_over_equiv_slice_over' (c : α) :
+  slice_over c = slice_over' c := by sorry
 
 -- exercise 1.2.ii.i
 theorem Category.split_epi_iff {X Y : α} (f : Hom X Y) :
