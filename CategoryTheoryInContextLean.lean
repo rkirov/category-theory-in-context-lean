@@ -1,3 +1,4 @@
 import CategoryTheoryInContextLean.Section_1_1
 import CategoryTheoryInContextLean.Section_1_2
 import CategoryTheoryInContextLean.Section_1_3
+import CategoryTheoryInContextLean.Appendix
