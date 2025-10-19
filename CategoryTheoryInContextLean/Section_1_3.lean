@@ -28,6 +28,12 @@ class Functor (α β : Type*) [C : Category α] [D : Category β] where
 
 def EndoFunctor (α : Type*) [Category α] := @Functor α α
 
+def IdFunctor {α : Type*} [Category α] : Functor α α where
+  F X := X
+  homF f := f
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
 -- examples 1.3.2.i
 def PowerSetFunctor : Functor Type Type where
   F X := Set X
@@ -100,20 +106,20 @@ def g_set_right_action (α : Type*) [Group α] (β : Type*) :
 -- todo: corollary 1.3.10, we haven't defined ⁻¹ on isomorphisms yet
 
 -- definition 1.3.11 / exercise 1.3.iv
-def Hom_c_? (α : Type*) [Category α] (c : α) : Functor α Type where
+def Hom_c_? {α : Type*} [Category α] (c : α) : Functor α Type where
   F Y := Hom c Y
   homF {Y Z : α} (f : Hom Y Z) (g : Hom c Y) := g ≫ f
   map_id Y := by sorry
   map_comp {Y Z W : α} (f : Hom Y Z) (g : Hom Z W) := by sorry
 
-def Hom_?_c (α : Type*) [Category α] (c : α) : ContraFunctor α Type where
+def Hom_?_c {α : Type*} [Category α] (c : α) : ContraFunctor α Type where
   F X := Hom X c
   homF {X Y : α} (f: Hom X Y) (g : Hom Y c) := f ≫ g
   map_id X := by sorry
   map_comp {X Y Z : α} (f : Hom X Y) (g : Hom Y Z) := by sorry
 
 -- definition 1.3.12
-instance CatProduct {α β : Type*} [C : Category α] [D : Category β] : Category (Prod α β) where
+instance CatProduct {α β : Type*} [C : Category α] [D : Category β] : Category (α × β) where
   Hom X Y := (C.Hom X.1 Y.1) × (D.Hom X.2 Y.2)
   id X := (id X.1, id X.2)
   comp f g := (f.1 ≫ g.1, f.2 ≫ g.2)
@@ -129,7 +135,7 @@ fixing an object in the other factor.
 this is not proved in the book, but it is easy to prove and useful
 -/
 def prod_functor_functorial_1 {α β γ : Type*} [C : Category α] [D : Category β]
-    [Inhabited β] [E : Category γ] (F : Functor (Prod α β) γ) : Functor α γ where
+    [Inhabited β] [E : Category γ] (F : Functor (α × β) γ) : Functor α γ where
   F := fun X => F.F (X, default)
   homF := fun {X Y} f => F.homF (f, id default)
   map_id X := by
@@ -141,7 +147,7 @@ def prod_functor_functorial_1 {α β γ : Type*} [C : Category α] [D : Category
     rw [id_comp]
 
 def prod_functor_functorial_2 {α β γ : Type*} [C : Category α] [D : Category β]
-    [Inhabited α] [E : Category γ] (F : Functor (Prod α β) γ) : Functor β γ where
+    [Inhabited α] [E : Category γ] (F : Functor (α × β) γ) : Functor β γ where
   -- todo: find a clever way to prove using prod_functor_functorial_1
   F := fun Y => F.F (default, Y)
   homF := fun {Y Z} f => F.homF (id default, f)
@@ -154,7 +160,7 @@ def prod_functor_functorial_2 {α β γ : Type*} [C : Category α] [D : Category
     rw [comp_id]
 
 -- definition 1.3.13
-def Hom_bifunctor (α : Type*) [C : Category α] : Functor (Prod (Opposite α) α) Type where
+def Hom_bifunctor (α : Type*) [C : Category α] : Functor (Opposite α × α) Type where
   -- without the C. qualification Lean picks up C.opp.Hom and hilarity ensues
   F X := C.Hom X.1 X.2
   homF {X Y} f g := f.1 ≫ g ≫ f.2
@@ -177,6 +183,13 @@ def Hom_bifunctor (α : Type*) [C : Category α] : Functor (Prod (Opposite α) �
 def Cat.{u, v} : Type (max (u+1) (v+1)) :=
   Σ (α : Type u), Category.{u, v} α
 
+def Functor.comp {α β γ : Type*} [C : Category α] [D : Category β] [E : Category γ]
+    (F : Functor α β) (G : Functor β γ) : Functor α γ where
+  F x := G.F (F.F x)
+  homF f := G.homF (F.homF f)
+  map_id X := by simp [F.map_id, G.map_id]
+  map_comp f g := by simp [F.map_comp, G.map_comp]
+
 universe u v
 instance : Category Cat.{u, v} where
   Hom C D := @Functor C.1 D.1 C.2 D.2
@@ -187,15 +200,10 @@ instance : Category Cat.{u, v} where
     map_id _ := rfl
     map_comp _ _ := rfl
   }
-  comp {C D E} F G := letI := C.2; letI := D.2; letI := E.2; {
-    F x := G.F (F.F x)
-    homF f := G.homF (F.homF f)
-    map_id X := by simp [F.map_id, G.map_id]
-    map_comp f g := by simp [F.map_comp, G.map_comp]
-  }
-  id_comp := by simp
-  comp_id := by simp
-  assoc := by simp
+  comp {C D E} F G := @Functor.comp C.1 D.1 E.1 C.2 D.2 E.2 F G
+  id_comp := by dsimp [Functor.comp]; simp
+  comp_id := by dsimp [Functor.comp]; simp
+  assoc := by dsimp [Functor.comp]; simp
 
 def Category.CatIsomorphism (C D : Cat) := Isomorphism C.1 D.1
 def Category.CatIsomorphic (C D : Cat) := Isomorphic C.1 D.1
