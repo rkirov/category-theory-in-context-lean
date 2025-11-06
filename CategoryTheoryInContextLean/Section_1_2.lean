@@ -95,8 +95,8 @@ example {X Y : Set α} (f : Category.Hom X Y) (hf : Category.Epi f) :
     Function.Surjective f := by sorry
 
 -- example 1.2.9
-def Category.IsSection {X Y : α} (f : Hom Y X) (g : Hom X Y) := g ≫ f = id X
-def Category.IsRetraction {X Y : α} (f : Hom X Y) (g : Hom Y X) := f ≫ g = id X
+def Category.IsSection {X Y : α} (f : Hom X Y) (g : Hom Y X) := f ≫ g = id X 
+def Category.IsRetraction {X Y : α} (f : Hom Y X) (g : Hom X Y) := g ≫ f = id X
 def Category.IsRetract (X Y : α) := ∃ (f : Hom X Y), ∃ (g : Hom Y X), f ≫ g = id X
 
 alias Category.IsRightInverse := Category.IsSection
