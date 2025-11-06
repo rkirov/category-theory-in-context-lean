@@ -5,7 +5,7 @@ freely available https://emilyriehl.github.io/files/context.pdf.
 
 ## Current progress
 
-- Chapter 1 - Sections 1, 2, 3
+- Chapter 1 - Sections 1, 2, 3, 4 + Solutions 1
 
 ## How to write a Lean companion to an existing math textbook
 
