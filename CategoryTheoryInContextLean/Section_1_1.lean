@@ -209,7 +209,10 @@ lemma Category.empty_subcategory_subset {α : Type*} [Category α] :
 def Category.maximal_subgroupoid {α : Type*} [Category α] : Subcategory α where
   obj X := True
   hom f := Category.IsIso f
-  id_mem x := by sorry
+  id_mem _ := by
+    rw [Category.iso_iff_isIso]
+    use id_iso _
+    rfl
   comp_mem _ _ _ hf hg := by sorry
 
 -- exercise 1.1.i

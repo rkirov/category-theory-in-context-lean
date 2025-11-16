@@ -3,9 +3,11 @@
 This repo is a Lean companion to the Category Theory in Context textbook. The book is
 freely available https://emilyriehl.github.io/files/context.pdf.
 
+In this branch all problems have solutions.
+
 ## Current progress
 
-- Chapter 1 - Sections 1, 2, 3
+- Chapter 1 - Sections 1, 2, 3, 4
 
 ## How to write a Lean companion to an existing math textbook
 
