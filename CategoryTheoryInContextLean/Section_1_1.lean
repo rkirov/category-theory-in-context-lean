@@ -216,6 +216,9 @@ def Category.maximal_subgroupoid {α : Type*} [Category α] : Subcategory α whe
 theorem Category.pair_inverse_iso {X Y : α} (f : Hom X Y) (g : Hom Y X) (h : Hom Y X)
   (hg : f ≫ g = id X) (hf : h ≫ f = id Y) : g = h ∧ IsIso f := by sorry
 
+theorem inv_unique_iso : ∀ {A B : α} {iso1 iso2 : Category.Isomorphism A B},
+      iso1.f = iso2.f → iso1.inv = iso2.inv := by sorry
+
 -- exercise 1.1.iii.i
 def Category.slice_under (c : α) : Category (Σ X : α, Hom c X) where
   Hom := fun ⟨X, f⟩ ⟨Y, g⟩ => {h : Hom X Y // f ≫ h = g}
